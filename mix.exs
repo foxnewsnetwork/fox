@@ -5,6 +5,10 @@ defmodule Fox.Mixfile do
     [app: :fox,
      version: "0.0.1",
      elixir: "~> 1.0",
+     description: "Collection of support utility functions and extensions for day-to-day web development with Elixir",
+     name: "fox",
+     source_url: "https://github.com/foxnewsnetwork/fox",
+     package: package,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]
@@ -15,6 +19,12 @@ defmodule Fox.Mixfile do
   # Type `mix help compile.app` for more information
   def application do
     [applications: [:logger, :timex, :ecto]]
+  end
+
+  defp package do
+    [contributors: ["Thomas Chen - (foxnewsnetwork)"],
+     licenses: ["MIT"],
+     links: %{github: "https://github.com/foxnewsnetwork/fox"}]
   end
 
   # Dependencies can be Hex packages:
