@@ -2,8 +2,6 @@ defmodule FoxTest do
   use ExUnit.Case
 
   test "the truth" do
-    IO.puts :random.uniform(64)
-    IO.puts :random.uniform(64)
     assert 1 + 1 == 2
   end
 
@@ -25,5 +23,12 @@ defmodule FoxTest do
     assert_raise RuntimeError, fn ->
       Fox.StringExt.random(0.22)
     end
+  end
+
+  # Run the test twice and inspect that the value should be different
+  test "Fox.RandomExt.uniform" do
+    k = Fox.RandomExt.uniform(99)
+    IO.puts k
+    assert k
   end
 end

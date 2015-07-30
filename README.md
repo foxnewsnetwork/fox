@@ -54,8 +54,20 @@ random(33)
 ```
 Remember, this *is* erlang's `:random.uniform` in the background, and so it's only pseudo-random
 
+### RandomExt
+`uniform/1` : just like erlang's `:random.uniform/1` except it messes up the seed first so it doesn't generate the same value each time on process start. Handy for when you need to generate tokens for the database which shouldn't repeat or be trivially predictable (lol the NSA will still crack it though, because this uses :os.timestamp)
+```elixir
+uniform(11)
+# 12345678901
+# here you kill your process and restart it
+uniform(11)
+# 23482323444 
+```
+Notice that this function goes against everything Erlang stands for in terms of the fail-often-and-restore-state philosophy. Therefore, please know what you're doing before peppering this guy everywhere.
+
 #### TimeExt
 `parse/1` : takes a string and attempts to parse it into a Ecto.DateTime regardless of its format (work in progress)
+
 
 ## TODOs
 
