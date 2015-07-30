@@ -47,6 +47,13 @@ just_ids(%Ecto.Association.NotLoaded{}) # nil
 # "breaking-bang-are-50-percent-of-americans-trying-to-kill-you-question"
 ```
 
+`random/1` : takes an integer and generates a random url-friendly string from it. N defaults to 10. Useful for when you need to quickly generate lengthy tokens, and you don't need the heavy-handed complexity of bcrypt or even sha256
+```elixir
+random(33) 
+# dv9hUn7rfnKOtLkOebBkfaUEmWMND522V
+```
+Remember, this *is* erlang's `:random.uniform` in the background, and so it's only pseudo-random
+
 #### TimeExt
 `parse/1` : takes a string and attempts to parse it into a Ecto.DateTime regardless of its format (work in progress)
 
