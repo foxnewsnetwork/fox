@@ -3,7 +3,7 @@ defmodule Fox.Mixfile do
 
   def project do
     [app: :fox,
-     version: "0.0.1",
+     version: "0.0.2",
      elixir: "~> 1.0",
      description: "Collection of support utility functions and extensions for day-to-day web development with Elixir",
      name: "fox",
