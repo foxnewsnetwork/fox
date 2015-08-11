@@ -19,6 +19,12 @@ query |> encode_query
 
 `decode_query/1`: the reverse of the above *** NOT IMPLEMENTED YET ***
 
+`fmt/2` : Takes a template string and fills it in with stuff in the tuple
+```elixir
+"customers/:custmer_id/cards/:id" |> fmt({"cus_666", "car_616"})
+# customers/cus_666/cards/car_616
+```
+
 #### DictExt
 `reject_blank_keys/1` : removes all the keys from a dict that are "blank" in the web json sense.
 ```elixir

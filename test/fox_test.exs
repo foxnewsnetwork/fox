@@ -76,4 +76,10 @@ defmodule FoxTest do
     ]
     assert actual == expected
   end
+
+  test "Fox.UriExt.fmt should work" do
+    actual = "customers/:custmer_id/cards/:id/thing/:id" |> Fox.UriExt.fmt({"cus_666", "car_616", "444"})
+    expected = "customers/cus_666/cards/car_616/thing/444"
+    assert actual == expected
+  end
 end
