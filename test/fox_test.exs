@@ -42,4 +42,21 @@ defmodule FoxTest do
     expected = "dog=rover&cats[]=mrmittens&cats[]=fluffmeister&mascots[ember]=hamster&mascots[go]=gopher"
     assert actual == expected
   end
+
+  test "encode_query should work on maps also" do
+    query = %{
+      "cat" => "fluffy",
+      "dogs" => ["rover", "spot"]
+    }
+    actual = query |> Fox.UriExt.encode_query |> String.replace("%5B", "[") |> String.replace("%5D", "]")
+    expected = "cat=fluffy&dogs[]=rover&dogs[]=spot"
+    assert actual == expected
+  end
+
+  test "it should handle empty things just fine" do
+    q1 = %{}
+    q2 = []
+    assert Fox.UriExt.encode_query(q1) == ""
+    assert Fox.UriExt.encode_query(q2) == ""
+  end
 end
