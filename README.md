@@ -20,10 +20,23 @@ query |> encode_query
 `decode_query/1`: the reverse of the above *** NOT IMPLEMENTED YET ***
 
 #### DictExt
-`reject_blank_keys/1` : removes all the keys from a dict that are "blank" in the web json sense
+`reject_blank_keys/1` : removes all the keys from a dict that are "blank" in the web json sense.
 ```elixir
 %{dog: 1, cat: "", bat: [], swede: nil} |> reject_blank_keys
 # %{dog: 1, bat: []}
+```
+
+`shallowify_keys/1` : Takes a dict with possibly many levels of embedded dicts, and puts it into a one-level deep list with string keys. Super useful for simplifying form data so HTTPoison / Hackney can consume.
+
+For example:
+```elixir
+dict = %{
+  dog: "rover", 
+  cats: ["mrmittens", "fluffmeister"], 
+  mascots: %{ember: "hamster", go: "gopher"}
+}
+dict |> shallowify_keys
+# [{"dog", "rover"}, {"cats[]", "mrmittens"}, {"cats[]", "fluffmeister"}, {"mascots[ember]", "hamster"}, {"mascots[go]", "gopher"}]
 ```
 
 #### FunctionExt
