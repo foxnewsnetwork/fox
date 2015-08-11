@@ -5,6 +5,20 @@ My collection of utility functions I find helpful in day-to-day web programming 
 
 > This is alpha software! Use at your own peril!
 
+#### UriExt
+`encode_query/1` : just like `URI.encode_query/1`, except it also encodes embedded lists and maps
+```elixir
+query = [
+  dog: "rover", 
+  cats: ["mrmittens", "fluffmeister"], 
+  mascots: %{ember: "hamster", go: "gopher"}
+] 
+query |> encode_query
+# dog=rover&cats[]=mrmittens&cats[]=fluffmeister&mascots[ember]=hamster&mascots[go]=gopher
+```
+
+`decode_query/1`: the reverse of the above *** NOT IMPLEMENTED YET ***
+
 #### DictExt
 `reject_blank_keys/1` : removes all the keys from a dict that are "blank" in the web json sense
 ```elixir

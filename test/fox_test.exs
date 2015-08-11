@@ -31,4 +31,15 @@ defmodule FoxTest do
     IO.puts k
     assert k
   end
+
+  test "Fox.UriExt.encode_query should encode complex queries" do
+    query = [
+      dog: "rover", 
+      cats: ["mrmittens", "fluffmeister"], 
+      mascots: %{ember: "hamster", go: "gopher"}
+    ]
+    actual = query |> Fox.UriExt.encode_query |> String.replace("%5B", "[") |> String.replace("%5D", "]")
+    expected = "dog=rover&cats[]=mrmittens&cats[]=fluffmeister&mascots[ember]=hamster&mascots[go]=gopher"
+    assert actual == expected
+  end
 end
