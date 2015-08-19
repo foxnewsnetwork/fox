@@ -5,6 +5,8 @@ My collection of utility functions I find helpful in day-to-day web programming 
 
 > This is alpha software! Use at your own peril!
 
+```
+
 #### UriExt
 `encode_query/1` : just like `URI.encode_query/1`, except it also encodes embedded lists and maps
 ```elixir
@@ -53,6 +55,18 @@ pray = fn girl -> girl |> Budan.pray_to("buddha") end
 love = fn girl -> girl |> USA.love("white guy") end
 
 live_like_hipster = [eat, pray, love] |> Enum.reduce(&compose/2)
+```
+
+#### ParExt
+`|>/2` : The parallel pipe, it runs things in parallel. Handy for communicating with multiple external services that don't depend on each other. Consider the example:
+```elixir
+{heroku_app_id, stripe_customer_id} |> {Hexoku.Api.Apps.get, Stripex.Customers.retrieve}
+# {%Hexoku.App{...}, %Stripex.Customer{...}}
+
+# equivalent to the following:
+task1 = Task.async(fn -> Hexoku.Api.Apps.get(heroku_app_id) end)
+task2 = Task.async(fn -> Stripex.Customes.retrieve(stripe_customer_id) end)
+{Task.await(task1), Task.await(task2)}
 ```
 
 #### IntegerExt

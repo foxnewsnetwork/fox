@@ -82,4 +82,14 @@ defmodule FoxTest do
     expected = "customers/cus_666/cards/car_616/thing/444"
     assert actual == expected
   end
+
+  test "Fox.ParExt.|> should calculate things in parallel" do
+    import Kernel, except: [{:|>, 2}]
+    import Fox.ParExt, only: [{:|>, 2}]
+    plus = fn x -> x + 1 end
+    times = fn x -> x * 9 end
+    actual = {1,2} |> {plus.(), times.()}
+    expected = {2, 18}
+    assert actual == expected
+  end
 end
