@@ -5,8 +5,6 @@ My collection of utility functions I find helpful in day-to-day web programming 
 
 > This is alpha software! Use at your own peril!
 
-```
-
 #### UriExt
 `encode_query/1` : just like `URI.encode_query/1`, except it also encodes embedded lists and maps
 ```elixir
