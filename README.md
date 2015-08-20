@@ -86,6 +86,12 @@ just_ids([%User{id: 3}, %Ecto.Association.NotLoaded{}, %User{id: 5}]) # [3, nil,
 just_ids(%Ecto.Association.NotLoaded{}) # nil
 ```
 
+`view_for_model/1` : for some inexplicable reason, Phoenix took this function out in 0.14 and beyond, but it's back here. Takes the module name, appends view to it, and returns the atom. Blows up the view doesn't exist
+```elixir
+some_model = %MyApp.User{id: 4, username: "william"}
+some_model |> view_for_model # MyApp.UserView
+```
+
 #### StringExt
 `to_url/1` : takes a string and makes it look permalink-like
 ```elixir
