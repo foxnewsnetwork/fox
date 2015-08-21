@@ -16,6 +16,20 @@ defmodule Fox.StringExt do
     "+" => "plus"
   }
 
+  @int_exp ~r/-?\d+/
+  def integer?(string) do
+    @int_exp |> Regex.match?(string)
+  end
+
+  @float_exp ~r/-?\d*\.\d+/
+  def float?(string) do
+    @float_exp |> Regex.match?(string)
+  end
+
+  def number?(string) do
+    integer?(string) || float?(string)
+  end
+
 
   @doc """
   Takes a string and builds it into an url-friendly string,

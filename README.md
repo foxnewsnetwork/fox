@@ -91,6 +91,12 @@ some_model |> view_for_model # MyApp.UserView
 ```
 
 #### StringExt
+`integer?/1` : checks if a string can be parsed into an integer
+
+`float?/1` : checks if a string can be parsed into a float
+
+`number?/1` : checks if a string can be parsed as either a float or an integer
+
 `to_url/1` : takes a string and makes it look permalink-like
 ```elixir
 "Breaking! Are 50% of Americans trying to kill you?"

@@ -5,6 +5,20 @@ defmodule FoxTest do
     assert 1 + 1 == 2
   end
 
+  test "Fox.StringExt.integer?" do
+    assert Fox.StringExt.integer?("12")
+    refute Fox.StringExt.integer?("bob")
+    assert Fox.StringExt.integer?("0")
+    refute Fox.StringExt.integer?("")
+  end
+
+  test "Fox.StringExt.float?" do
+    assert Fox.StringExt.float?("12.3")
+    refute Fox.StringExt.float?("12")
+    assert Fox.StringExt.float?("00.21")
+    refute Fox.StringExt.float?("asdf a.sdfj 028ij")
+  end
+
   test "Fox.StringExt.to_url" do
     actual = Fox.StringExt.to_url("Breaking! Are 50% of Americans trying to kill you?")
     expected = "breaking-bang-are-50-percent-of-americans-trying-to-kill-you-question"
