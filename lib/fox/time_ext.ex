@@ -1,78 +1,52 @@
 defmodule Fox.TimeExt do
-
-  def american_like?(string) do
-    ~r/^\d{4}\-\d{2}-\d{2}$/ |> Regex.match?(string)
-  end
-  def parse_american(string) do
-    string
-    |> Timex.DateFormat.parse("{YYYY}-{0M}-{0D}")
-    |> (fn {_, timedate} -> timedate end).()
-    |> timex_to_ecto_datetime
-  end
-  def parse(string) do
-    cond do
-      american_like?(string) -> parse_american(string)
-      true -> parse_iso(string)
+  alias Timex.DateFormat
+  
+  @time_formats [
+    iso8601: {~r/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/, "{ISO}"},
+    iso: {~r/^\d{4}-\d{2}-\d{2}$/, "{YYYY}-{0M}-{0D}"},
+    rfc1123: {~r/^\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} [\+\-]\d{4}$/, "{RFC1123}"},
+    rfc1123: {~r/^\w{3}, \d{2} \w{3} \d{4} \d{2}:\d{2}:\d{2} \w{3}$/, "{RFC1123}"},
+    amerifat: {~r/^\d{2}\/\d{2}\/\d{4}$/, "{0M}/{0D}/{YYYY}"},
+    american: {~r/^\d{2}\/\d{2}\/\d{2}$/, "{0M}/{0D}/{YY}"},
+  ]
+  def parse!(whatever) do
+    case whatever |> parse do
+      {:ok, time} -> time
+      {:error, error} -> throw error
     end
   end
 
-  def parse_iso(string) do
-    string
-    |> Timex.DateFormat.parse("{ISO}")
-    |> (fn {_, timedate} -> timedate end).()
-    |> timex_to_ecto_datetime
+  def parse({{_,_,_}, {_,_,_}}=erl_datetime) do
+    {:ok, erl_datetime |> Timex.Date.from}
   end
-
-  @spec time_ago(integer, atom) :: Ecto.DateTime
-  def time_ago({amount, unit}), do: time_ago(amount, unit)
-  def time_ago(amount, unit) do
-    Ecto.DateTime.utc
-    |> subtract(amount, unit)
-  end
-
-  @spec time_from_now(integer, atom) :: Ecto.DateTime
-  def time_from_now({amount, unit}), do: time_from_now(amount, unit)
-  def time_from_now(amount, unit) do
-    Ecto.DateTime.utc
-    |> add(amount, unit)
-  end
-
-  @spec add(Ecto.DateTime, integer, atom) :: Ecto.DateTime
-  def add(datetime, integer, unit) do
-    datetime
-    |> ecto_datetime_to_timex
-    |> Timex.Date.shift([{unit, integer}])
-    |> timex_to_ecto_datetime
-  end
-
-  @spec subtract(Ecto.DateTime, integer, atom) :: Ecto.DateTime
-  def subtract(datetime, integer, unit) do
-    add(datetime, -integer, unit)
-  end
-
-  @spec timex_to_ecto_datetime(Timex.DateTime) :: Ecto.DateTime
-  def timex_to_ecto_datetime(timedate) do
-    timedate
-    |> timex_to_erl
-    |> Ecto.DateTime.from_erl
-  end
-
-  @spec timex_to_erl(Timex.DateTime) :: {{integer, integer, integer}, {integer, integer, integer}}
-  def timex_to_erl(timedate) do
-    timedate
-    |> Timex.Date.universal
-    |> timex_utc_to_erl
-  end
-
-  @spec ecto_datetime_to_timex(Ecto.DateTime) :: Timex.DateTime
-  def ecto_datetime_to_timex(datetime) do
-    datetime
+  def parse(%Ecto.DateTime{}=datetime) do
+    time = datetime 
     |> Ecto.DateTime.to_erl
     |> Timex.Date.from
+    {:ok, time}
+  end
+  def parse(string) when is_binary(string) do
+    case string |> parse_known_formats do
+      {:ok, time} -> {:ok, time}
+      {:error, error} -> {:error, error}
+      nil -> {:error, "I can't parse the following into a datetime: #{string}"}
+    end
+  end
+
+  defp parse_known_formats(string) do
+    format = @time_formats
+    |> Enum.map(&elem(&1, 1))
+    |> Enum.find(&matches_format?(&1, string))
+
+    case format do
+      {_regex, form} -> string |> DateFormat.parse(form)
+      _ -> nil
+    end
+  end
+
+  defp matches_format?({regex, _form}, string) do
+    regex |> Regex.match?(string)
   end
 
 
-  defp timex_utc_to_erl(%Timex.DateTime{year: year, month: month, day: day, hour: hour, minute: minute, day: day}) do
-    {{year, month, day}, {hour, minute, day}}
-  end
 end

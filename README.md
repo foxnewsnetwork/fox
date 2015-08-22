@@ -123,9 +123,24 @@ uniform(11)
 Notice that this function goes against everything Erlang stands for in terms of the fail-often-and-restore-state philosophy. Therefore, please know what you're doing before peppering this guy everywhere.
 
 #### TimeExt
-`parse/1` : takes a string and attempts to parse it into a Ecto.DateTime regardless of its format (work in progress)
+`parse/1` : takes a string and attempts to parse it into a Timex.DateTime regardless of its format (work in progress)
+```elixir
+"Tue, 06 Mar 2013 01:25:19 +0200" |> parse
+# {:ok,
+ %DateTime{calendar: :gregorian, day: 5, hour: 23, minute: 25, month: 3,
+  ms: 0, second: 19,
+  timezone: %TimezoneInfo{abbreviation: "UTC", from: :min,
+   full_name: "UTC", offset_std: 0, offset_utc: 0, until: :max}, year: 2013}}
 
+"2015-08-21T16:05:44-07:00" |> parse
+{:ok,
+ %Timex.DateTime{calendar: :gregorian, day: 22, hour: 0, minute: 0, month: 4,
+  ms: 0, second: 0,
+  timezone: %Timex.TimezoneInfo{abbreviation: "UTC", from: :min,
+   full_name: "UTC", offset_std: 0, offset_utc: 0, until: :max}, year: 2014}}
+```
 
+`parse!/` : same as the above, except throw errors if parsing doesn't work
 ## TODOs
 
 1. Write actual tests
