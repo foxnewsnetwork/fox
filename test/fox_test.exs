@@ -19,6 +19,22 @@ defmodule FoxTest do
     assert time.year == 2016
   end
 
+  test "Fox.StringExt.consume" do
+    {:ok, actual} = "Apiv3.AppleController" |> Fox.StringExt.consume("Apiv3.")
+    assert actual == "AppleController"
+
+    {:error, error} = "Departures ~あなたにおくるアイの歌~" |> Fox.StringExt.consume("egoist")
+    assert error == "expected 'e' to equal 'D' in 'Departures ~あなたにおくるアイの歌~'"
+  end
+
+  test "Fox.StringExt.reverse_consume" do
+    {:ok, actual} = "Apiv3.AppleController" |> Fox.StringExt.reverse_consume("Controller")
+    assert actual == "Apiv3.Apple"
+
+    {:error, error} = "Departures ~あなたにおくるアイの歌" |> Fox.StringExt.reverse_consume("egoist")
+    assert error == "expected 't' to equal '歌' in 'Departures ~あなたにおくるアイの歌'"
+  end
+
   test "Fox.StringExt.integer?" do
     assert Fox.StringExt.integer?("12")
     refute Fox.StringExt.integer?("bob")

@@ -91,6 +91,30 @@ some_model |> view_for_model # MyApp.UserView
 ```
 
 #### StringExt
+`consume/2` : takes a string and a token string and attempts to consume the token from the string from the left. Very useful when inferring model / view names from a controller.
+```elixir
+"dog food" |> consume("dog ")
+# {:ok, "food"}
+
+"dog food" |> consume("cat")
+# {:error, "no cat in dog food"}
+```
+
+`reverse_consume/2` : same as the, except consumes from the right end
+```elixir
+"namae no nai kaibutsu" |> reverse_consume("kaibutsu")
+# {:ok, "namae no nai "}
+
+"namae no nai kaibutsu" |> reverse_consume("dumb show")
+# {:error, _}
+```
+
+`next_grapheme/2` : just like String.next_grapheme, except if you give it the :reverse atom, it goes backwards
+```elixir
+"極彩色" |> next_grapheme(:reverse)
+# {"極彩", "色"}
+```
+
 `integer?/1` : checks if a string can be parsed into an integer
 
 `float?/1` : checks if a string can be parsed into a float

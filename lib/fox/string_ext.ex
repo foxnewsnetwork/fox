@@ -1,20 +1,52 @@
 defmodule Fox.StringExt do
-  @character_map %{
-    "%" => "percent",
-    "#" => "hashtag",
-    "@" => "at",
-    "?" => "question",
-    "!" => "bang",
-    "&" => "and",
-    "*" => "star",
-    "/" => "slash",
-    "\\" => "backslash",
-    "\"" => "quote",
-    "'" => "quote",
-    "," => "comma",
-    "." => "period",
-    "+" => "plus"
-  }
+
+  @doc """
+  Takes a string consume from the left a portion of the string and returns the remaining string 
+  """
+  def consume(meal, ""), do: {:ok, meal}
+  def consume(meal, bite) do
+    {m, eal} = meal |> String.next_grapheme
+    {b, ite} = bite |> String.next_grapheme
+    if m == b do
+      consume(eal, ite)
+    else
+      {:error, "expected '#{b}' to equal '#{m}' in '#{meal}'"}
+    end
+  end
+
+  def consume!(meal, bite) do
+    case meal |> consume(bite) do
+      {:ok, leftover} -> leftover
+      {:error, error} -> throw error
+    end
+  end
+
+  def reverse_consume(meal, ""), do: {:ok, meal}
+  def reverse_consume(meal, bite) do
+    {mea, l} = meal |> next_grapheme(:reverse)
+    {bit, e} = bite |> next_grapheme(:reverse)
+
+    if l == e do
+      reverse_consume(mea, bit)
+    else
+      {:error, "expected '#{e}' to equal '#{l}' in '#{meal}'"}
+    end
+  end
+
+  def reverse_consume!(meal, bite) do
+    case meal |> reverse_consume(bite) do
+      {:ok, leftover} -> leftover
+      {:error, error} -> throw error
+    end
+  end
+
+  def next_grapheme(string), do: String.next_grapheme(string)
+  def next_grapheme(string, :reverse) do
+    g = String.last(string)
+    strin = string |> String.slice(0..-2)
+    {strin, g}
+  end
+  def next_grapheme(string, _), do: next_grapheme(string)
 
   @int_exp ~r/^-?\d+$/
   def integer?(string) do
@@ -31,6 +63,22 @@ defmodule Fox.StringExt do
   end
 
 
+  @character_map %{
+    "%" => "percent",
+    "#" => "hashtag",
+    "@" => "at",
+    "?" => "question",
+    "!" => "bang",
+    "&" => "and",
+    "*" => "star",
+    "/" => "slash",
+    "\\" => "backslash",
+    "\"" => "quote",
+    "'" => "quote",
+    "," => "comma",
+    "." => "period",
+    "+" => "plus"
+  }
   @doc """
   Takes a string and builds it into an url-friendly string,
   good for permalinks and generally being passed around in the browser

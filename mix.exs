@@ -3,9 +3,9 @@ defmodule Fox.Mixfile do
 
   def project do
     [app: :fox,
-     version: "0.1.0",
+     version: "0.1.1",
      elixir: "~> 1.0",
-     description: "Collection of support utility functions and extensions for day-to-day web development with Elixir",
+     description: description,
      name: "fox",
      source_url: "https://github.com/foxnewsnetwork/fox",
      package: package,
@@ -25,6 +25,14 @@ defmodule Fox.Mixfile do
     [contributors: ["Thomas Chen - (foxnewsnetwork)"],
      licenses: ["MIT"],
      links: %{github: "https://github.com/foxnewsnetwork/fox"}]
+  end
+
+  defp description do
+    """
+    Collection of support utility functions and extensions for day-to-day web development with Elixir.
+
+    Includes utility extension to strings, uri, dicts, integers, functions, parallel, records, random, and time
+    """
   end
 
   # Dependencies can be Hex packages:
