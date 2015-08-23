@@ -1,4 +1,20 @@
 defmodule Fox.StringExt do
+  alias Fox.Inflector
+  @inflector Inflector.inflections
+
+  @doc """
+  Takes a word and returns its singular form
+  """
+  def singularize(nouns) do
+    @inflector |> Inflector.singularize(nouns)
+  end
+
+  @doc """
+  Takes a singular word and returns the plural form
+  """
+  def pluralize(noun) do
+    @inflector |> Inflector.pluralize(noun)
+  end
 
   @doc """
   Takes a string consume from the left a portion of the string and returns the remaining string 

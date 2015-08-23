@@ -19,6 +19,29 @@ defmodule FoxTest do
     assert time.year == 2016
   end
 
+  test "Fox.StringExt.singularize" do
+    assert Fox.StringExt.singularize("dogs") == "dog"
+    assert Fox.StringExt.singularize("dog") == "dog"
+    assert Fox.StringExt.singularize("sheep") == "sheep"
+    assert Fox.StringExt.singularize("sexes") == "sex"
+    assert Fox.StringExt.singularize("octopi") == "octopus"
+    assert Fox.StringExt.singularize("君の翔ぶ空") == "君の翔"
+    assert Fox.StringExt.singularize("染") == "somaru"
+    assert Fox.StringExt.singularize("doge") == "doge"
+  end
+
+  test "Fox.StringExt.pluralize" do
+    assert Fox.StringExt.pluralize("dogs") == "dogs"
+    assert Fox.StringExt.pluralize("dog") == "dogs"
+    assert Fox.StringExt.pluralize("sheep") == "sheep"
+    assert Fox.StringExt.pluralize("sex") == "sexes"
+    assert Fox.StringExt.pluralize("octopi") == "octopi"
+    assert Fox.StringExt.pluralize("octopus") == "octopi"
+    assert Fox.StringExt.pluralize("黒") == "黒猫"
+    assert Fox.StringExt.pluralize("somaru") == "染"
+    assert Fox.StringExt.pluralize("doge") == "doge"
+  end
+
   test "Fox.StringExt.consume" do
     {:ok, actual} = "Apiv3.AppleController" |> Fox.StringExt.consume("Apiv3.")
     assert actual == "AppleController"

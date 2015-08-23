@@ -91,6 +91,21 @@ some_model |> view_for_model # MyApp.UserView
 ```
 
 #### StringExt
+`singularize/1` : takes an English word and returns its singular form (sorry, only English support for now)
+```elixir
+"dogs" |> singularize # dog
+"oxen" |> singularize # ox
+```
+
+`pluralize/1`: takes an English word and returns its plural form.
+```elixir
+"black" |> pluralize # blacks
+"white" |> pluralize # whites
+```
+
+>note: it's possible to extend the inflector to include more words, take a look at `config/test.exs` to see an example. Your extensions take precedence over the inflections that ship with the Fox inflector
+
+
 `consume/2` : takes a string and a token string and attempts to consume the token from the string from the left. Very useful when inferring model / view names from a controller.
 ```elixir
 "dog food" |> consume("dog ")
