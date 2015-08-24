@@ -3,8 +3,6 @@ Fox
 
 My collection of utility functions I find helpful in day-to-day web programming with Elixir.
 
-> This is alpha software! Use at your own peril!
-
 #### UriExt
 `encode_query/1` : just like `URI.encode_query/1`, except it also encodes embedded lists and maps
 ```elixir
@@ -91,6 +89,42 @@ some_model |> view_for_model # MyApp.UserView
 ```
 
 #### StringExt
+`camelize/1` : camel cases a string
+```elixir
+"under_scored" |> camelize
+# UnderScored
+
+# acronyms are not restored by camelize (lol obviously)
+"acronym_hiv" |> camelize
+# AcronymHiv 
+
+# spaces are ignored
+"sakidasu kasa no mure ni" |> camelize
+# Sakidasu kasa no mure ni
+
+"my_app/module/sub_module" |> camelize
+# MyApp.Module.SubModule
+```
+
+`underscore/1` : underscores a string
+```elixir
+"CamelCase" |> underscore
+# camel_case
+
+"AcronymHIV" |> underscore
+# acronym_hiv
+
+"dasher-ized" |> underscore
+# dasher_ized
+
+# Spaces are ignored (following rails convention)
+"regular words" |> underscore
+# regular words
+
+"MyApp.Module.SubModule" |> underscore
+# my_app/module/sub_module
+```
+
 `singularize/1` : takes an English word and returns its singular form (sorry, only English support for now)
 ```elixir
 "dogs" |> singularize # dog
@@ -160,6 +194,33 @@ uniform(11)
 # 23482323444 
 ```
 Notice that this function goes against everything Erlang stands for in terms of the fail-often-and-restore-state philosophy. Therefore, please know what you're doing before peppering this guy everywhere.
+
+#### AtomExt
+`infer_model_module/1` : Takes a controller module and attempts to infer its model module name. 
+  Will error if not given a controller module or the model doesn't exist.
+
+```elixir
+MyApp.PictureController |> infer_model_module
+# MyApp.Picture
+```
+
+`infer_model_key/1` : Takes a controller module and attempts to infer the underscored atom key of its model. Will throw error if not given a controller or the model doesn't exist
+```elixir
+MyApp.PictureController |> infer_model_key
+# :picture
+
+MyApp.DonkeyPunchController |> infer_model_key
+# :donkey_punch
+```
+
+`infer_collection_key/1` : Takes a controller module and attempts to infer the underscored atom key of its model's collection. Throws error if not given a controller or the model doesn't exist.
+```elixir
+MyApp.PictureController |> infer_model_key
+# :pictures
+
+MyApp.DonkeyPunchController |> infer_model_key
+# :donkey_punches
+```
 
 #### TimeExt
 `parse/1` : takes a string and attempts to parse it into a Timex.DateTime regardless of its format (work in progress)

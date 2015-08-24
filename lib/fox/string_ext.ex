@@ -3,6 +3,86 @@ defmodule Fox.StringExt do
   @inflector Inflector.inflections
 
   @doc """
+  Takes a string and makes it camel-cased.
+  Note that "/" become periods "."
+
+  ## Examples
+    "under_scored" |> camelize
+    # UnderScored
+  
+    # acronyms are not restored by camelize (lol obviously)
+    "acronym_hiv" |> camelize
+    # AcronymHiv 
+    
+    # spaces are ignored
+    "sakidasu kasa no mure ni" |> camelize
+    # Sakidasu kasa no mure ni
+
+    "my_app/module/sub_module" |> camelize
+    # MyApp.Module.SubModule
+  """
+  def camelize(string) do
+    string
+    |> String.split("/")
+    |> Enum.map(&dumb_capitalize/1)
+    |> Enum.join(".")
+    |> String.split("_")
+    |> Enum.map(&dumb_capitalize/1)
+    |> Enum.join("")
+  end
+  defp dumb_capitalize(""), do: ""
+  defp dumb_capitalize(str) when is_binary(str) do
+    {s, tr} = str |> String.next_grapheme
+    String.capitalize(s) <> tr
+  end
+
+  @doc """
+  Takes a string and makes it underscored. This is the semi-inverse of camelize.
+  Note that because this is Elixir and not ruby, periods become "/", not "::"
+
+  ## Examples
+    "CamelCase" |> underscore
+    # camel_case
+
+    "AcronymHIV" |> underscore
+    # acronym_hiv
+
+    "dasher-ized" |> underscore
+    # dasher_ized
+
+    # Spaces are ignored (following rails convention)
+    "regular words" |> underscore
+    # regular words
+
+    "MyApp.Module.SubModule" |> underscore
+    # my_app/module/sub_module
+  """
+  @lower_case ~r/[a-z0-9]/
+  @upper_case ~r/[A-Z]/
+  def underscore(string) do
+    "" |> underscore(string)
+  end
+  defp underscore(output, ""), do: output
+  defp underscore(output, original) do
+    {grapheme, remaining} = original |> String.next_grapheme
+    {lookahead, _} = remaining |> String.next_grapheme || {"", ""}
+      
+    translation = cond do
+      grapheme == "." -> 
+        "/"
+      grapheme == "-" ->
+        "_"
+      grapheme =~ @lower_case and lookahead =~ @upper_case ->
+        grapheme <> "_"
+      grapheme =~ @upper_case ->
+        String.downcase(grapheme)
+      true ->
+        grapheme
+    end
+    underscore(output <> translation, remaining)
+  end
+
+  @doc """
   Takes a word and returns its singular form
   """
   def singularize(nouns) do
