@@ -46,6 +46,9 @@ defmodule Fox.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [{:ecto, "~> 0.14"},
-     {:timex, "~> 0.15"}]
+     {:timex, "~> 0.15"},
+     {:earmark, "~> 0.1", only: :dev},
+     {:ex_doc, "~> 0.7", only: :dev},
+     {:inch_ex, "~> 0.2", only: :dev}]
   end
 end
