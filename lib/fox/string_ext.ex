@@ -1,7 +1,7 @@
 defmodule Fox.StringExt do
+
   alias Fox.Inflector
   @inflector Inflector.inflections
-
   @doc """
   Takes a string and makes it camel-cased.
   Note that "/" become periods "."
@@ -66,7 +66,7 @@ defmodule Fox.StringExt do
   defp underscore(output, original) do
     {grapheme, remaining} = original |> String.next_grapheme
     {lookahead, _} = remaining |> String.next_grapheme || {"", ""}
-      
+
     translation = cond do
       grapheme == "." -> 
         "/"
@@ -84,6 +84,16 @@ defmodule Fox.StringExt do
 
   @doc """
   Takes a word and returns its singular form
+
+  ## Examples
+    "dogs" |> singularize # dog
+    "oxen" |> singularize # ox
+
+    "App.Something.DumbChildren" |> singularize
+    # "App.Something.DumbChild"
+
+    "App.Something.DumbChildRen" |> singularize
+    # "App.Something.DumbChildRen"
   """
   def singularize(nouns) do
     @inflector |> Inflector.singularize(nouns)
@@ -91,6 +101,20 @@ defmodule Fox.StringExt do
 
   @doc """
   Takes a singular word and returns the plural form
+
+  ## Examples
+    "black" |> pluralize # blacks
+    "white" |> pluralize # whites
+
+    "App.Something.DumbChild" |> pluralize
+    # "App.Something.DumbChildren"
+
+    "App.Something.DumbChildRen" |> pluralize
+    # "App.Something.DumbChildRens"
+
+  Note that in the last example, random capitalization
+  will induce the inflector to treat ChildRen as 2 words.
+  This is intentionally different from ActiveSupport's version.
   """
   def pluralize(noun) do
     @inflector |> Inflector.pluralize(noun)
@@ -98,6 +122,13 @@ defmodule Fox.StringExt do
 
   @doc """
   Takes a string consume from the left a portion of the string and returns the remaining string 
+
+  ## Examples
+    "dog food" |> consume("dog ")
+    # {:ok, "food"}
+    
+    "dog food" |> consume("cat")
+    # {:error, "no cat in dog food"}
   """
   def consume(meal, ""), do: {:ok, meal}
   def consume(meal, bite) do
@@ -110,6 +141,9 @@ defmodule Fox.StringExt do
     end
   end
 
+  @doc """
+  Same as `consume/2`, except throws error instead of returning a tuple
+  """
   def consume!(meal, bite) do
     case meal |> consume(bite) do
       {:ok, leftover} -> leftover
@@ -117,6 +151,16 @@ defmodule Fox.StringExt do
     end
   end
 
+  @doc """
+  Consumes a string starting from the end and going to the begining.
+
+  ## Examples
+    "namae no nai kaibutsu" |> reverse_consume("kaibutsu")
+    # {:ok, "namae no nai "}
+
+    "namae no nai kaibutsu" |> reverse_consume("dumb show")
+    # {:error, _}
+  """
   def reverse_consume(meal, ""), do: {:ok, meal}
   def reverse_consume(meal, bite) do
     {mea, l} = meal |> next_grapheme(:reverse)
@@ -129,6 +173,9 @@ defmodule Fox.StringExt do
     end
   end
 
+  @doc """
+  Same as `reverse_consume/2` except returns values/throws error instead of returning tuple
+  """
   def reverse_consume!(meal, bite) do
     case meal |> reverse_consume(bite) do
       {:ok, leftover} -> leftover
@@ -136,6 +183,13 @@ defmodule Fox.StringExt do
     end
   end
 
+  @doc """
+  Just like `String.next_grapheme/1`, except if you give it the `:reverse` atom, it goes backwards
+
+  ## Examples
+    "極彩色" |> next_grapheme(:reverse)
+    # {"極彩", "色"}
+  """
   def next_grapheme(string), do: String.next_grapheme(string)
   def next_grapheme(string, :reverse) do
     g = String.last(string)
@@ -145,15 +199,24 @@ defmodule Fox.StringExt do
   def next_grapheme(string, _), do: next_grapheme(string)
 
   @int_exp ~r/^-?\d+$/
+  @doc """
+  returns true if a string can be parsed as an integer
+  """
   def integer?(string) do
     @int_exp |> Regex.match?(string)
   end
 
   @float_exp ~r/^-?\d*\.\d+$/
+  @doc """
+  returns true if a string can be parsed as an float
+  """
   def float?(string) do
     @float_exp |> Regex.match?(string)
   end
 
+  @doc """
+  returns true if a string can be parsed as an integer or float
+  """
   def number?(string) do
     integer?(string) || float?(string)
   end
@@ -178,6 +241,10 @@ defmodule Fox.StringExt do
   @doc """
   Takes a string and builds it into an url-friendly string,
   good for permalinks and generally being passed around in the browser
+  ## Examples
+    "Breaking! Are 50% of Americans trying to kill you?"
+    |> to_url
+    # "breaking-bang-are-50-percent-of-americans-trying-to-kill-you-question"
   """
   def to_url(nil), do: nil
   def to_url(string) do
@@ -191,6 +258,10 @@ defmodule Fox.StringExt do
 
   @doc """
   Generates a random string of length n. Defaults to n = 10
+  
+  ## Examples
+    random(33) 
+    # dv9hUn7rfnKOtLkOebBkfaUEmWMND522V
   """
   def random, do: random(10)  
   def random(n) do
@@ -215,4 +286,5 @@ defmodule Fox.StringExt do
   def transformify({pattern, replacement}) do
     &String.replace(&1, pattern, " #{replacement} ")
   end
+
 end

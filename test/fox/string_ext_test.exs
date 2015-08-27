@@ -24,8 +24,14 @@ defmodule Fox.StringExtTest do
     assert singularize("sexes") == "sex"
     assert singularize("octopi") == "octopus"
     assert singularize("君の翔ぶ空") == "君の翔"
-    assert singularize("染") == "somaru"
+    assert singularize("多く染") == "染"
+    assert singularize("染") == "染"
     assert singularize("doge") == "doge"
+    assert singularize("child") == "child"
+    assert singularize("children") == "child"
+    assert singularize("App.Stupid.Children") == "App.Stupid.Child"
+    assert singularize("App.Stupid.Child") == "App.Stupid.Child"
+    assert singularize("BadEquipment") == "BadEquipment"
   end
 
   test "pluralize" do
@@ -36,8 +42,14 @@ defmodule Fox.StringExtTest do
     assert pluralize("octopi") == "octopi"
     assert pluralize("octopus") == "octopi"
     assert pluralize("黒") == "黒猫"
-    assert pluralize("somaru") == "染"
+    assert pluralize("染") == "多く染"
+    assert pluralize("多く染") == "多く染"
     assert pluralize("doge") == "doge"
+    assert pluralize("child") == "children"
+    assert pluralize("children") == "children"
+    assert pluralize("App.Insufferable.Woman") == "App.Insufferable.Women"
+    assert pluralize("App.Insufferable.Women") == "App.Insufferable.Women"
+    assert pluralize("BadEquipment") == "BadEquipment"
   end
 
   test "consume" do

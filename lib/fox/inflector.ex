@@ -1,24 +1,149 @@
 defmodule Fox.Inflector do
   defstruct plural_rules: [], 
-    single_rules: [], 
-    single_irregulars: %{}, 
-    plural_irregulars: %{}, 
+    single_rules: [],
+    irregulars: [],
     uncountables: []
 
-  def singularize(%{single_rules: rules, single_irregulars: irregulars, uncountables: uncountables}, string) do
-    singular_form = apply_special_rules(string, uncountables, irregulars) || apply_rules(string, rules)
+  def singularize(%{single_rules: rules, irregulars: irregulars, uncountables: uncountables}, string) do
+    singular_form = apply_rules(string, uncountables) || 
+      apply_irregular_singles(string, irregulars) || 
+      apply_rules(string, rules)
     case singular_form do
       nil -> string
       x -> x
     end
   end
 
-  def pluralize(%{plural_rules: rules, plural_irregulars: irregulars, uncountables: uncountables}, string) do
-    plural_form = apply_special_rules(string, uncountables, irregulars) || apply_rules(string, rules)
+  def pluralize(%{plural_rules: rules, irregulars: irregulars, uncountables: uncountables}, string) do
+    plural_form = apply_rules(string, uncountables) ||
+      apply_irregular_plurals(string, irregulars) || 
+      apply_rules(string, rules)
     case plural_form do
       nil -> string
       x -> x
     end
+  end
+
+  defp apply_rules(string, rules) do
+    case rules |> Enum.find(&matches_rule(&1, string)) do
+      uncountable when is_binary(uncountable) -> 
+        string
+      {regex, replacement} -> 
+        string |> String.replace(regex, replacement)
+      _ -> nil
+    end
+  end
+
+  defp matches_rule(uncountable, string) when is_binary(uncountable) do
+    alias Fox.StringExt, as: S
+    case string |> S.reverse_consume(uncountable) do
+      {:ok, _} -> true
+      {:error, _} -> false
+    end
+  end
+  defp matches_rule({gobi, _}, string) when is_binary(gobi) do
+    alias Fox.StringExt, as: S
+    case string |> S.reverse_consume(gobi) do
+      {:ok, _} -> true
+      {:error, _} -> false
+    end
+  end
+  defp matches_rule({regex, _}, string) do
+    regex |> Regex.match?(string)
+  end
+
+  defp matches_irregular_gobi({gobi, replacement}, string) do
+    case string |> Fox.StringExt.reverse_consume(gobi) do
+      {:ok, _} -> true
+      {:error, _} -> false
+    end
+  end
+
+  defp matches_irregular_repl({gobi, replacement}, string) do
+    matches_irregular_gobi({replacement, gobi}, string)
+  end
+
+  defp try_irregular_gobi(string, irregulars) do
+    case irregulars |> Enum.find(&matches_irregular_gobi(&1, string)) do
+      {gobi, replacement} ->
+        string
+        |> Fox.StringExt.reverse_consume!(gobi)
+        |> Kernel.<>(replacement)
+      _ -> nil
+    end
+  end
+
+  defp try_irregular_repl(string, irregulars) do
+    case irregulars |> Enum.find(&matches_irregular_repl(&1, string)) do
+      {gobi, replacement} -> string
+      _ -> nil
+    end
+  end
+
+  defp apply_irregular_singles(string, irregulars) do
+    irregulars = irregulars |> Enum.map(fn {a,b} -> {b,a} end)
+    try_irregular_gobi(string, irregulars) || try_irregular_repl(string, irregulars)
+  end
+
+  defp apply_irregular_plurals(string, irregulars) do
+    try_irregular_repl(string, irregulars) || try_irregular_gobi(string, irregulars)
+  end
+
+  defp plural(inflector, regex, replacement) do
+    plural_rules = [{regex, replacement} | inflector.plural_rules]
+    %{inflector | plural_rules: plural_rules}
+  end
+
+  defp singular(inflector, regex, replacement) do
+    single_rules = [{regex, replacement} | inflector.single_rules]
+    %{inflector | single_rules: single_rules}
+  end
+
+  defp irregular(inflector, single, plural) do
+    r1 = {dumb_decapitalize(single), dumb_decapitalize(plural)}
+    r2 = {dumb_capitalize(single), dumb_capitalize(plural)}
+    rules = if r1 == r2, do: [r1], else: [r1, r2]
+    %{inflector | irregulars: rules ++ inflector.irregulars}
+  end
+
+  defp uncountable(inflector, strings) when is_list(strings) do
+    strings |> Enum.reduce(inflector, &uncountable(&2, &1))
+  end
+
+  defp uncountable(inflector, string) when is_binary(string) do
+    r1 = dumb_decapitalize(string)
+    r2 = dumb_capitalize(string)
+    rules = if r1 == r2, do: [r1], else: [r1, r2]
+    %{inflector | uncountables: rules ++ inflector.uncountables}
+  end
+
+  defp dumb_decapitalize(""), do: ""
+  defp dumb_decapitalize(str) when is_binary(str) do
+    {s, tr} = str |> String.next_grapheme
+    String.downcase(s) <> tr
+  end
+
+  defp dumb_capitalize(""), do: ""
+  defp dumb_capitalize(str) when is_binary(str) do
+    {s, tr} = str |> String.next_grapheme
+    String.capitalize(s) <> tr
+  end
+
+  defp apply_environment_inflections(inflector) do
+    Application.get_env(:fox, :inflections, [])
+    |> Enum.reduce(inflector, &apply_config_inflections/2)
+  end
+  defp apply_config_inflections({:plural, {regex, replacement}}, inflector) do
+    inflector |> plural(regex, replacement)
+  end
+  defp apply_config_inflections({:singular, {regex, replacement}}, inflector) do
+    inflector |> singular(regex, replacement)
+  end
+  defp apply_config_inflections({:irregular, {single, plural}}, inflector) do
+    inflector |> irregular(single, plural)
+  end
+  defp apply_config_inflections({:uncountable, word}, inflector) do
+    inflector |> uncountable(word)
   end
 
   def inflections do
@@ -82,66 +207,5 @@ defmodule Fox.Inflector do
 
     |> uncountable(~w(equipment information rice money species series fish sheep jeans police))
     |> apply_environment_inflections
-  end
-
-  defp apply_environment_inflections(inflector) do
-    Application.get_env(:fox, :inflections, [])
-    |> Enum.reduce(inflector, &apply_config_inflections/2)
-  end
-  defp apply_config_inflections({:plural, {regex, replacement}}, inflector) do
-    inflector |> plural(regex, replacement)
-  end
-  defp apply_config_inflections({:singular, {regex, replacement}}, inflector) do
-    inflector |> singular(regex, replacement)
-  end
-  defp apply_config_inflections({:irregular, {single, plural}}, inflector) do
-    inflector |> irregular(single, plural)
-  end
-  defp apply_config_inflections({:uncountable, word}, inflector) do
-    inflector |> uncountable(word)
-  end
-
-  defp apply_rules(string, rules) do
-    case rules |> Enum.find(&matches_rule(&1, string)) do
-      {regex, replacement} -> string |> String.replace(regex, replacement)
-      _ -> nil
-    end
-  end
-
-  defp matches_rule({regex, _}, string) do
-    regex |> Regex.match?(string)
-  end
-
-  defp apply_special_rules(string, uncountables, dict) do
-    cond do
-      string in uncountables -> string
-      Dict.has_key?(dict, string) -> dict |> Dict.fetch!(string)
-      true -> nil
-    end
-  end
-
-  defp plural(inflector, regex, replacement) do
-    plural_rules = [{regex, replacement} | inflector.plural_rules]
-    %{inflector | plural_rules: plural_rules}
-  end
-
-  defp singular(inflector, regex, replacement) do
-    single_rules = [{regex, replacement} | inflector.single_rules]
-    %{inflector | single_rules: single_rules}
-  end
-
-  defp irregular(inflector, single, plural) do
-    single_irregulars = inflector.single_irregulars |> Dict.put(single, plural)
-    plural_irregulars = inflector.plural_irregulars |> Dict.put(plural, single)
-    %{inflector | single_irregulars: single_irregulars, plural_irregulars: plural_irregulars}
-  end
-
-  defp uncountable(inflector, strings) when is_list(strings) do
-    strings |> Enum.reduce(inflector, &uncountable(&2, &1))
-  end
-
-  defp uncountable(inflector, string) when is_binary(string) do
-    uncountables = inflector.uncountables
-    %{inflector | uncountables: [string|uncountables]}
   end
 end
