@@ -14,6 +14,8 @@ defmodule Fox.AtomExtTest do
     assert Fox.AtomExtTest.DonkeyPunchController |> infer_model_module == Fox.AtomExtTest.DonkeyPunch
     assert Fox.AtomExtTest.AppleView |> infer_model_module == Fox.AtomExtTest.Apple
     assert Fox.AtomExtTest.DonkeyPunchView |> infer_model_module == Fox.AtomExtTest.DonkeyPunch
+    assert Fox.AtomExtTest.Apple |> infer_model_module == Fox.AtomExtTest.Apple
+    assert Fox.AtomExtTest.DonkeyPunch |> infer_model_module == Fox.AtomExtTest.DonkeyPunch
   end 
   
   test "infer_model_key" do
@@ -21,6 +23,8 @@ defmodule Fox.AtomExtTest do
     assert Fox.AtomExtTest.DonkeyPunchController |> infer_model_key == :donkey_punch
     assert Fox.AtomExtTest.AppleView |> infer_model_key == :apple
     assert Fox.AtomExtTest.DonkeyPunchView |> infer_model_key == :donkey_punch
+    assert Fox.AtomExtTest.Apple |> infer_model_key == :apple
+    assert Fox.AtomExtTest.DonkeyPunch |> infer_model_key == :donkey_punch
   end
 
   test "infer_collection_key" do
@@ -28,5 +32,7 @@ defmodule Fox.AtomExtTest do
     assert Fox.AtomExtTest.DonkeyPunchController |> infer_collection_key == :donkey_punches
     assert Fox.AtomExtTest.AppleView |> infer_collection_key == :apples
     assert Fox.AtomExtTest.DonkeyPunchView |> infer_collection_key == :donkey_punches
+    assert Fox.AtomExtTest.Apple |> infer_collection_key == :apples
+    assert Fox.AtomExtTest.DonkeyPunch |> infer_collection_key == :donkey_punches
   end
 end

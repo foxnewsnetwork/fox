@@ -10,19 +10,26 @@ defmodule Fox.AtomExt do
 
     MyApp.DogFoodView |> infer_model_module
     # MyApp.DogFood
+
+    MyApp.DogFood |> infer_model_module
+    # MyApp.DogFood
   """
   def infer_model_module(module) when is_atom(module) do
     module
     |> Atom.to_string
-    |> consume_one!("Controller", "View")
+    |> maybe_consume_one("Controller", "View")
     |> String.to_existing_atom
   end
-  defp consume_one!(string, first_choice, second_choice) do
+  defp maybe_consume_one(string, first_choice, second_choice) do
     string
     |> Fox.StringExt.reverse_consume(first_choice)
     |> case do
+      {:ok, leftover} -> {:ok, leftover}
+      {:error, _} -> Fox.StringExt.reverse_consume(string, second_choice)
+    end
+    |> case do
       {:ok, leftover} -> leftover
-      {:error, _} -> Fox.StringExt.reverse_consume!(string, second_choice)
+      {:error, _} -> string
     end
   end
 
@@ -39,6 +46,9 @@ defmodule Fox.AtomExt do
 
     MyApp.DonkeyPunchController |> infer_model_key
     # :donkey_punch
+
+    MyApp.DirtyApple |> infer_model_key
+    # :dirty_apply
   """
   def infer_model_key(module) when is_atom(module) do
     module

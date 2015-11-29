@@ -87,15 +87,5 @@ defmodule FoxTest do
     assert actual == expected
   end
 
-  defmodule Somaru do
-    defstruct singer: "reol"
-  end
-  defmodule SomaruView, [do: "dogs"]
-  test "Fox.RecordExt.view_for_model should find correct module" do
-    model = %Somaru{}
-    assert model.singer == "reol"
-    actual = model |> Fox.RecordExt.view_for_model
-    expected = SomaruView
-    assert actual == expected
-  end
+  
 end
