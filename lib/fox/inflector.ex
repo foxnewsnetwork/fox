@@ -52,7 +52,7 @@ defmodule Fox.Inflector do
     regex |> Regex.match?(string)
   end
 
-  defp matches_irregular_gobi({gobi, replacement}, string) do
+  defp matches_irregular_gobi({gobi, _replacement}, string) do
     case string |> Fox.StringExt.reverse_consume(gobi) do
       {:ok, _} -> true
       {:error, _} -> false
@@ -75,7 +75,7 @@ defmodule Fox.Inflector do
 
   defp try_irregular_repl(string, irregulars) do
     case irregulars |> Enum.find(&matches_irregular_repl(&1, string)) do
-      {gobi, replacement} -> string
+      {_, _} -> string
       _ -> nil
     end
   end
