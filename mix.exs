@@ -22,7 +22,7 @@ defmodule Fox.Mixfile do
   end
 
   defp package do
-    [contributors: ["Thomas Chen - (foxnewsnetwork)"],
+    [maintainers: ["Thomas Chen - (foxnewsnetwork)"],
      licenses: ["MIT"],
      links: %{github: "https://github.com/foxnewsnetwork/fox"}]
   end
