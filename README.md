@@ -3,6 +3,18 @@ Fox
 
 My collection of utility functions I find helpful in day-to-day web programming with Elixir.
 
+#### EnumExt
+`oxford_join/3`: similar to `Enum.join/2`, except accounts for the Oxford comma
+```elixir
+["shoes", "ships", "sealing-wax"]
+|> oxford_join(", ", " and ")
+# "shoes, ships, and sealing-wax"
+
+["dogs", "cats"]
+|> oxford_join(", ", " and ")
+# "dogs and cats"
+```
+
 #### UriExt
 `encode_query/1` : just like `URI.encode_query/1`, except it also encodes embedded lists and maps
 ```elixir
