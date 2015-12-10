@@ -137,6 +137,25 @@ some_model |> view_for_model # MyApp.UserView
 # my_app/module/sub_module
 ```
 
+`dasherize/1` : dasherizes a string
+```elixir
+"CamelCase" |> dasherize
+# camel-case
+
+"AcronymHIV" |> dasherize
+# acronym-hiv
+
+"under_score" |> dasherize
+# under-score
+
+# Spaces are ignored (following rails convention)
+"regular words" |> dasherize
+# regular words
+
+"MyApp.Module.SubModule" |> dasherize
+# my-app/module/sub-module
+```
+
 `singularize/1` : takes an English word and returns its singular form (sorry, only English support for now)
 ```elixir
 "dogs" |> singularize # dog

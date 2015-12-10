@@ -83,6 +83,33 @@ defmodule Fox.StringExt do
   end
 
   @doc """
+  Takes a string and makes it dashed, very similar to underscore, except
+  instead of "_" we use "-"
+
+  ### Examples
+    "CamelCase" |> dasherize
+    # camel-case
+
+    "AcronymHIV" |> dasherize
+    # acronym-hiv
+
+    "dasher-ized" |> dasherize
+    # dasher-ized
+
+    # Spaces are ignored (following rails convention)
+    "regular words" |> dasherize
+    # regular words
+
+    "MyApp.Module.SubModule" |> dasherize
+    # my-app/module/sub-module
+  """
+  def dasherize(string) do
+    string
+    |> underscore
+    |> String.replace("_", "-")
+  end
+
+  @doc """
   Takes a word and returns its singular form
 
   ## Examples

@@ -17,6 +17,15 @@ defmodule Fox.StringExtTest do
     assert "MyApp.Module.SubModule" |> underscore == "my_app/module/sub_module"
   end
 
+  test "dasherize" do
+    assert "CamelCase" |> dasherize == "camel-case"
+    assert "AcronymHIV" |> dasherize == "acronym-hiv"
+    assert "dasher-ized" |> dasherize == "dasher-ized"
+    assert "under_scored" |> dasherize == "under-scored"
+    assert "regular words" |> dasherize == "regular words"
+    assert "MyApp.Module.SubModule" |> dasherize == "my-app/module/sub-module"
+  end
+
   test "singularize" do
     assert singularize("dogs") == "dog"
     assert singularize("dog") == "dog"
