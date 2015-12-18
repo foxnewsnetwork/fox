@@ -55,6 +55,31 @@ dict |> shallowify_keys
 # [{"dog", "rover"}, {"cats[]", "mrmittens"}, {"cats[]", "fluffmeister"}, {"mascots[ember]", "hamster"}, {"mascots[go]", "gopher"}]
 ```
 
+#### MapExt
+`present_update/3` : Runs the update function if and only if the map already has the given key.
+```elixir
+%{dog: 1, cat: 2} |> present_update(:dog, &(&1 + 1))
+# %{dog: 2, cat: 2}
+
+%{dog: 1, cat: 3} |> present_update(:serenade, &(&1 * &1))
+# %{dog: 1, cat: 3}
+```
+
+`present_put/3` : Puts the given value to map if and only if the value isn't one of the following: `nil`, `""`, nil, `%{}`
+```elixir
+%{dog: 1} |> present_put(:cat, %{})
+%{dog: 1}
+
+%{dog: 1} |> present_put(:cat, 1)
+%{dog: 1, cat: 1}
+```
+
+`value_map/2` : Maps over just the value of your map while keeping all the keys the same
+```elixir
+%{dog: 1, cat: 2} |> value_map(&(&1 + 2))
+# %{dog: 3, cat: 4}
+```
+
 #### FunctionExt
 `compose/2` : the function version of elixir's `|>`, useful for building pipes with reduces
 ```elixir
