@@ -43,18 +43,5 @@ defmodule Fox.MapExt do
     end
   end
 
-  @doc """
-  Maps over just the value of your map while keeping
-  all the keys the same
-
-  ### Examples
-      %{dog: 1, cat: 2} |> value_map(&(&1 + 2))
-      # %{dog: 3, cat: 4}
-  """
-  @spec value_map(Map.t, (any -> any)) :: Map.t
-  def value_map(map, f) do
-    map 
-    |> Map.keys
-    |> Enum.reduce(map, fn key, map -> map |> Map.update!(key, f) end)
-  end
+  defdelegate [value_map(map, f), key_map(map, f)], to: Fox.DictExt
 end

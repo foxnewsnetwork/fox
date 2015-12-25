@@ -54,23 +54,6 @@ defmodule FoxTest do
     assert Fox.UriExt.encode_query(q2) == ""
   end
 
-  test "Fox.DictExt.shallowify_keys should produce shallow list keys" do
-    dict = %{
-      dog: "rover", 
-      cats: ["mrmittens", "fluffmeister"], 
-      mascots: %{ember: "hamster", go: "gopher"}
-    }
-    actual = dict |> Fox.DictExt.shallowify_keys
-    expected = [
-      {"cats[]", "mrmittens"},
-      {"cats[]", "fluffmeister"},
-      {"dog", "rover"},
-      {"mascots[ember]", "hamster"},
-      {"mascots[go]", "gopher"}
-    ]
-    assert actual == expected
-  end
-
   test "Fox.UriExt.fmt should work" do
     actual = "customers/:custmer_id/cards/:id/thing/:id" |> Fox.UriExt.fmt({"cus_666", "car_616", "444"})
     expected = "customers/cus_666/cards/car_616/thing/444"
