@@ -15,6 +15,21 @@ My collection of utility functions I find helpful in day-to-day web programming 
 # "dogs and cats"
 ```
 
+#### ListExt
+`head/1` : returns everything except the last member of a list
+```elixir
+[1,2,3] |> head
+# [1,2]
+[] |> head
+# []
+```
+
+`tail/1` : returns everything except the first member of a list
+```elixir
+[1,2,3] |> tail
+# [2,3]
+```
+
 #### UriExt
 `encode_query/1` : just like `URI.encode_query/1`, except it also encodes embedded lists and maps
 ```elixir
