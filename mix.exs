@@ -3,7 +3,7 @@ defmodule Fox.Mixfile do
 
   def project do
     [app: :fox,
-     version: "0.1.12",
+     version: "1.0.0",
      elixir: "~> 1.0",
      description: description,
      name: "fox",
@@ -18,7 +18,7 @@ defmodule Fox.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger, :timex, :ecto]]
+    [applications: [:logger, :ecto]]
   end
 
   defp package do
@@ -46,7 +46,6 @@ defmodule Fox.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [{:ecto, ">= 0.14.0"},
-     {:timex, ">= 0.14.0"},
      {:earmark, "~> 0.1", only: :dev},
      {:ex_doc, "~> 0.7", only: :dev},
      {:inch_ex, "~> 0.2", only: :dev}]

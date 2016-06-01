@@ -1,25 +1,7 @@
 defmodule FoxTest do
   use ExUnit.Case
 
-  test "the truth" do
-    assert 1 + 1 == 2
-  end
-
-  test "Fox.TimeExt.parse" do
-    {:ok, time} = "2015-08-21T16:05:44-07:00" |> Fox.TimeExt.parse
-    assert time.day == 21
-
-    {:ok, time} = "Tue, 06 Mar 2013 01:25:19 +0200" |> Fox.TimeExt.parse
-    assert time.month == 3
-
-    time = "2013-04-22" |> Fox.TimeExt.parse!
-    assert time.year == 2013
-
-    {:ok, time} = "02/14/2016" |> Fox.TimeExt.parse
-    assert time.year == 2016
-  end
-
-  # Run the test twice and inspect that the value should be different
+   # Run the test twice and inspect that the value should be different
   test "Fox.RandomExt.uniform" do
     k = Fox.RandomExt.uniform(99)
     IO.puts k
