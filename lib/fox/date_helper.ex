@@ -1,4 +1,4 @@
-defmodule DateHelper do
+defmodule Fox.DateHelper do
 
   @doc """
   Converts an Elixir/Ecto date to common EU string format (dd/mm/yyyy).

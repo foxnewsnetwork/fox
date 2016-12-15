@@ -1,4 +1,4 @@
-defmodule DateHelperTest do
+defmodule Fox.DateHelperTest do
   use ExUnit.Case
 
   test "date_to_text: successfully converted" do
